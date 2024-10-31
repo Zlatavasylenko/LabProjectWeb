@@ -1,0 +1,63 @@
+﻿@model LabProject.Models.CastMember
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container mt-5">
+    <h1>@Model.CastMemberFullName</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+            {
+                <img src="@Url.Content(Model.PhotoUrl)" alt="Фото @Model.CastMemberFullName" class="img-fluid" />
+            }
+            else
+            {
+                <span>Немає фото</span>
+            }
+        </div>
+        <div class="col-md-8">
+            <h4>Деталі члена касту</h4>
+            <dl class="row">
+                <dt class="col-sm-3">Повне ім'я:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.CastMemberFullName)</dd>
+            </dl>
+            <h5>Фільми:</h5>
+            @if (Model.MovieCasts.Any())
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Назва фільму</th>
+                            <th>Тривалість (хв)</th>
+                            <th>Рейтинг</th>
+                            <th>Дата виходу</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var movieCast in Model.MovieCasts)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(m => movieCast.Movie.MovieName)</td>
+                                <td>@Html.DisplayFor(m => movieCast.Movie.MovieDuration)</td>
+                                <td>@Html.DisplayFor(m => movieCast.Movie.MovieRating)</td>
+                                <td>@Html.DisplayFor(m => movieCast.Movie.MovieReleaseDate)</td> 
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <span>Не вказано фільми</span>
+            }
+
+        </div>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.CastMemberId" class="btn btn-warning">Редагувати</a>
+        <a asp-action="Index" class="btn btn-secondary">Назад до списку</a>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+﻿@model LabProject.Models.Movie
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Movie</h4>
+    <hr />
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.MovieName)</th>
+                <td>@Html.DisplayFor(model => model.MovieName)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.MovieDuration)</th>
+                <td>@Html.DisplayFor(model => model.MovieDuration) хв</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.MovieRating)</th>
+                <td>@Html.DisplayFor(model => model.MovieRating)</td>
+            </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.MovieReleaseDate)</th>
+                <td>@Html.DisplayFor(model => model.MovieReleaseDate.ToString("dd.MM.yyyy"))</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.MovieId" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

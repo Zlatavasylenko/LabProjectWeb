@@ -1,0 +1,120 @@
+﻿@model IEnumerable<LabProject.Models.Movie>
+
+@{
+    ViewData["Title"] = "Movies";
+}
+
+<h1 class="mt-5">Фільми</h1>
+@if (ViewBag.hidden != 1)
+{
+    <a asp-action="Create">
+        <input type="button" value="Додати фільм" class="btn btn-info disabled mt-2 mb-3" />
+    </a>
+}
+
+<!-- Input field for autocomplete -->
+<div>
+    <input type="text" id="movieSearch" placeholder="Enter movie name..." />
+    <button id="searchButton">Search</button>
+</div>
+<div id="autocompleteResults"></div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MovieName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MovieDuration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MovieRating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MovieReleaseDate)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MovieName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MovieDuration) хв
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MovieRating)
+                </td>
+                <td>
+                    @item.MovieReleaseDate.ToShortDateString()  <!-- Direct formatting -->
+                </td>
+                @if (ViewBag.hidden != 1)
+                {
+                    <td>
+                        <a href="@Url.Action("Details", new { id = item.MovieId })">
+                            <input type="button" value="Команда" class="btn btn-info" />
+                        </a>
+                        <a href="@Url.Action("MovieGenreList", "Genres", new { movieId = item.MovieId })">
+                            <input type="button" value="Жанри" class="btn btn-info" />
+                        </a>
+                        <a href="@Url.Action("Edit", new { id = item.MovieId })">
+                            <input type="button" value="Редагувати" class="btn btn-outline-info" />
+                        </a>
+                        <a href="@Url.Action("Delete", new { id = item.MovieId })">
+                            <input type="button" value="Видалити" class="btn btn-outline-info" />
+                        </a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" />
+
+    <script>
+        $(document).ready(function () {
+            // Initialize autocomplete
+            $("#movieSearch").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Movies/SearchMovies', // Adjust the URL to your controller action
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            term: request.term // term is the text typed in the input field
+                        },
+                        success: function (data) {
+                            response(data); // Respond with the data received from the server
+                        }
+                    });
+                },
+                minLength: 3, // Minimum length before search starts
+                delay: 300, // Delay in milliseconds before sending the request
+                select: function (event, ui) {
+                    // When an item is selected, set the input value to the movie name
+                    $("#movieSearch").val(ui.item.label); // Use the label for display
+                    return false; // Prevent the default behavior of setting the input value to the value
+                }
+            });
+
+            // Search button click event
+            $('#searchButton').on('click', function () {
+                var searchTerm = $('#movieSearch').val();
+                if (searchTerm.length >= 3) {
+                    // Redirect to the search action with the search term as a query parameter
+                    window.location.href = '/Movies/Search?term=' + encodeURIComponent(searchTerm);
+                } else {
+                    alert('Please enter at least 3 characters to search.');
+                }
+            });
+        });
+    </script>
+
+}
